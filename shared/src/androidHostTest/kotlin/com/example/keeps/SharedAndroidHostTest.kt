@@ -3,7 +3,7 @@ package com.example.keeps
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SharedUICommonTest {
+class SharedAndroidHostTest {
 
     @Test
     fun example() {
