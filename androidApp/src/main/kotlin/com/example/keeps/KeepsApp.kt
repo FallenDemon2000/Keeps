@@ -1,63 +1,62 @@
 package com.example.keeps
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.keeps.presentation.ui.navigation.KeepsNavHost
 import com.example.keeps.presentation.ui.theme.KeepsTheme
+import com.example.keeps.presentation.ui.theme.ThemeMode
+import com.example.keeps.presentation.ui.theme.ThemeViewModel
+import com.example.keeps.presentation.ui.theme.resolveDarkTheme
 
+/**
+ * App root: owns the app-wide [ThemeViewModel] (the one piece of state shared
+ * across tabs), resolves dark/light mode, wraps [KeepsTheme], and hosts
+ * [KeepsNavHost].
+ */
 @Composable
-fun KeepsApp() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+fun KeepsApp(themeViewModel: ThemeViewModel = viewModel()) {
+    val themeMode by themeViewModel.themeMode.collectAsStateWithLifecycle()
+    val darkTheme = themeMode.resolveDarkTheme(isSystemInDarkTheme())
+
+    KeepsTheme(darkTheme = darkTheme) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background,
         ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("Compose: $greeting")
-                }
-            }
+            KeepsNavHost(
+                themeMode = themeMode,
+                onThemeModeChange = themeViewModel::setThemeMode,
+            )
         }
     }
 }
 
 @Preview
 @Composable
-fun KeepsAppPreview() {
-    KeepsTheme(darkTheme = false) {
-        KeepsApp()
+private fun KeepsAppPreview() {
+    KeepsTheme {
+        KeepsNavHost(
+            themeMode = ThemeMode.Light,
+            onThemeModeChange = {},
+        )
     }
 }
 
 @Preview
 @Composable
-fun KeepsAppDarkPreview() {
+private fun KeepsAppDarkPreview() {
     KeepsTheme(darkTheme = true) {
-        KeepsApp()
+        KeepsNavHost(
+            themeMode = ThemeMode.Dark,
+            onThemeModeChange = {},
+        )
     }
 }
