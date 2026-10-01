@@ -216,7 +216,6 @@ private fun HomeViewDarkPreview() {
     }
 }
 
-
 @Preview
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
