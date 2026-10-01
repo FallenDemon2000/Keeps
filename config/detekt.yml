@@ -24,6 +24,7 @@ complexity:
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: true
+    ignoreAnnotatedFunctions: ["Preview"]
   LongParameterList:
     active: true
     excludes: ["**/*Test.kt", "**/*Ext.kt", "**/ResourceProvider.kt"]
