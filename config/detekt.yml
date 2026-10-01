@@ -24,6 +24,12 @@ complexity:
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: true
+    ignoreAnnotatedFunctions: ["Preview"]
+  LongParameterList:
+    active: true
+    excludes: ["**/*Test.kt", "**/*Ext.kt", "**/ResourceProvider.kt"]
+    functionThreshold: 6
+    ignoreDefaultParameters:  true
 
 coroutines:
   active: true
@@ -215,3 +221,6 @@ naming:
   FunctionNaming:
     active: true
     ignoreAnnotated: [ "Composable" ]
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '^[A-Z][_A-Za-z0-9]*$'
