@@ -224,7 +224,6 @@ private fun GroupCard(
                             onToggleSelected = {
                                 onAction(ResultsAction.TogglePhotoSelected(photo.id))
                             },
-                            isKeepCandidate = photo.isKeepCandidate,
                             metadataText = "${photo.sizeText} \u00B7 ${photo.dimensionsText}",
                             modifier = Modifier.weight(1f),
                         )
