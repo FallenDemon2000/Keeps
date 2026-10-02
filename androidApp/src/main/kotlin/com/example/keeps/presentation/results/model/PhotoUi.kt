@@ -11,5 +11,4 @@ data class PhotoUi(
     val sizeBytes: Long,
     val sizeText: String,
     val dimensionsText: String,
-    val isKeepCandidate: Boolean,
 )

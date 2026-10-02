@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.keeps.presentation.ui.components.badges.KeepBadge
 import com.example.keeps.presentation.ui.icons.Icons
 import com.example.keeps.presentation.ui.theme.KeepsTheme
 
@@ -38,7 +37,6 @@ fun SelectableMediaTile(
     selected: Boolean,
     onToggleSelected: () -> Unit,
     modifier: Modifier = Modifier,
-    isKeepCandidate: Boolean = false,
     metadataText: String? = null,
 ) {
     Box(
@@ -55,9 +53,6 @@ fun SelectableMediaTile(
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.45f)),
             )
-        }
-        if (isKeepCandidate) {
-            KeepBadge(modifier = Modifier.align(Alignment.BottomStart).padding(8.dp))
         }
         if (metadataText != null) {
             Box(
@@ -124,7 +119,6 @@ private fun SelectableMediaTilePreview() {
                 ),
                 selected = false,
                 onToggleSelected = {},
-                isKeepCandidate = true,
                 metadataText = "4.2 MB · 4032\u00D73024",
             )
         }
