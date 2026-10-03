@@ -83,6 +83,20 @@ fun SelectableMediaTile(
 }
 
 @Composable
+private fun MediaMetadataOverlay(
+    metadataText: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        Text(
+            text = metadataText,
+            style = KeepsTheme.typography.labelSmall,
+            color = Color.White,
+        )
+    }
+}
+
+@Composable
 private fun MediaCheckBox(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
@@ -110,20 +124,6 @@ private fun MediaCheckBox(
                 modifier = Modifier.size(14.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun MediaMetadataOverlay(
-    metadataText: String,
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier) {
-        Text(
-            text = metadataText,
-            style = KeepsTheme.typography.labelSmall,
-            color = Color.White,
-        )
     }
 }
 
