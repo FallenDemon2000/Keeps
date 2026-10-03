@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -38,17 +37,17 @@ fun LabeledSlider(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(text = label, style = MaterialTheme.typography.bodyMedium)
+            Text(text = label, style = KeepsTheme.typography.bodyMedium)
             Text(
                 text = valueText,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
+                style = KeepsTheme.typography.labelLarge,
+                color = KeepsTheme.colorScheme.primary,
             )
         }
         Text(
             text = description,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
         )
         Slider(
@@ -56,9 +55,9 @@ fun LabeledSlider(
             onValueChange = onValueChange,
             valueRange = valueRange,
             colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.primary,
-                activeTrackColor = MaterialTheme.colorScheme.primary,
-                inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                thumbColor = KeepsTheme.colorScheme.primary,
+                activeTrackColor = KeepsTheme.colorScheme.primary,
+                inactiveTrackColor = KeepsTheme.colorScheme.surfaceVariant,
             ),
         )
         Row(
@@ -67,13 +66,13 @@ fun LabeledSlider(
         ) {
             Text(
                 text = minLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KeepsTheme.typography.bodySmall,
+                color = KeepsTheme.colorScheme.onSurfaceVariant,
             )
             Text(
                 text = maxLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KeepsTheme.typography.bodySmall,
+                color = KeepsTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

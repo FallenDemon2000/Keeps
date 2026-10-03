@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,15 +33,15 @@ fun BottomNavBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(KeepsTheme.colorScheme.surface)
             .padding(top = 8.dp, bottom = 24.dp),
     ) {
         items.forEachIndexed { index, item ->
             val selected = index == selectedIndex
             val tint = if (selected) {
-                MaterialTheme.colorScheme.primary
+                KeepsTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
+                KeepsTheme.colorScheme.onSurfaceVariant
             }
             Column(
                 modifier = Modifier
@@ -64,7 +63,7 @@ fun BottomNavBar(
                 }
                 Text(
                     text = item.label,
-                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                    style = KeepsTheme.typography.bodySmall.copy(fontSize = 11.sp),
                     color = tint,
                 )
             }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,12 +40,12 @@ fun EmptyState(
     ) {
         Text(text = icon, fontSize = 48.sp)
         Spacer(modifier = Modifier.height(14.dp))
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
+        Text(text = title, style = KeepsTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = description,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         if (actionLabel != null && onActionClick != null) {

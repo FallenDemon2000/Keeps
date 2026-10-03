@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,8 +32,8 @@ fun SecondaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            containerColor = KeepsTheme.colorScheme.surfaceVariant,
+            contentColor = KeepsTheme.colorScheme.onSurfaceVariant,
         ),
         contentPadding = PaddingValues(horizontal = 12.dp),
     ) {
@@ -45,7 +44,7 @@ fun SecondaryButton(
                 modifier = Modifier.height(16.dp),
             )
         }
-        Text(text = text, style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp))
+        Text(text = text, style = KeepsTheme.typography.bodyMedium.copy(fontSize = 12.sp))
     }
 }
 

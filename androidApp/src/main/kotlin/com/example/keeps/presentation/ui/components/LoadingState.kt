@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,27 +48,27 @@ fun LoadingState(
             modifier = Modifier
                 .size(72.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(KeepsTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Search,
                 contentDescription = "Search Icon",
                 modifier = Modifier.size(56.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = KeepsTheme.colorScheme.primary,
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = KeepsTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = subtitle,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -77,8 +76,8 @@ fun LoadingState(
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = progressPercentText,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
