@@ -1,5 +1,6 @@
 package com.example.keeps.presentation.ui.components
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,22 +19,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.example.keeps.presentation.ui.icons.Icons
 import com.example.keeps.presentation.ui.theme.KeepsTheme
 
 /**
  * Square, selectable photo tile used in the Results photo grid (photo-cell spec):
  * a gradient placeholder background, a top-right selection checkmark, an optional
- * "keep" badge, and a bottom gradient metadata overlay.
+ * "keep" badge, and a bottom gradient metadata overlay. When [imageUri] is set
+ * (real, picked photos), the actual thumbnail is drawn over [background] via
+ * Coil; [background] alone is used for mock/preview data with no real image.
  */
 @Composable
-@Suppress("LongMethod", "LongParameterList")
 fun SelectableMediaTile(
-    background: Brush,
+    imageUri: Uri,
     selected: Boolean,
     onToggleSelected: () -> Unit,
     modifier: Modifier = Modifier,
@@ -44,9 +47,15 @@ fun SelectableMediaTile(
             .fillMaxWidth()
             .aspectRatio(1f)
             .clip(RoundedCornerShape(10.dp))
-            .background(background)
+            .background(KeepsTheme.gradients.placeholder)
             .clickable(onClick = onToggleSelected),
     ) {
+        AsyncImage(
+            model = imageUri,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize(),
+        )
         if (selected) {
             Box(
                 modifier = Modifier
@@ -55,55 +64,67 @@ fun SelectableMediaTile(
             )
         }
         if (metadataText != null) {
-            Box(
+            MediaMetadataOverlay(
+                metadataText = metadataText,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
-                        ),
-                    )
+                    .background(KeepsTheme.gradients.shadow)
                     .padding(8.dp),
-            ) {
-                Text(
-                    text = metadataText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White,
-                )
-            }
+            )
         }
-        Box(
+        MediaCheckBox(
+            isSelected = selected,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(8.dp)
-                .size(24.dp)
-                .clip(CircleShape)
-                .background(
-                    if (selected) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        Color.Black.copy(alpha = 0.4f)
-                    },
-                )
-                .then(
-                    if (!selected) {
-                        Modifier.border(1.5.dp, Color.White.copy(alpha = 0.5f), CircleShape)
-                    } else {
-                        Modifier
-                    },
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (selected) {
-                Icon(
-                    imageVector = Icons.Check,
-                    contentDescription = "Selected for deletion",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(14.dp),
-                )
-            }
+                .size(24.dp),
+        )
+    }
+}
+
+@Composable
+private fun MediaCheckBox(
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    var backgroundColor = MaterialTheme.colorScheme.primary
+    var borderColor = MaterialTheme.colorScheme.primary
+
+    if (isSelected) {
+        backgroundColor = Color.Black.copy(alpha = 0.4f)
+        borderColor = Color.White.copy(alpha = 0.5f)
+    }
+
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(backgroundColor)
+            .border(1.5.dp, borderColor, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Check,
+                contentDescription = "Selected for deletion",
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(14.dp),
+            )
         }
+    }
+}
+
+@Composable
+private fun MediaMetadataOverlay(
+    metadataText: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        Text(
+            text = metadataText,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.White,
+        )
     }
 }
 
@@ -114,10 +135,24 @@ private fun SelectableMediaTilePreview() {
     KeepsTheme(darkTheme = true) {
         Box(modifier = Modifier.size(180.dp)) {
             SelectableMediaTile(
-                background = Brush.linearGradient(
-                    listOf(Color(0xFF1A3A4A), Color(0xFF2D5A70), Color(0xFF1A4A3A)),
-                ),
+                imageUri = Uri.EMPTY,
                 selected = false,
+                onToggleSelected = {},
+                metadataText = "4.2 MB · 4032\u00D73024",
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+@Suppress("MagicNumber")
+private fun SelectableMediaTileCheckedPreview() {
+    KeepsTheme(darkTheme = true) {
+        Box(modifier = Modifier.size(180.dp)) {
+            SelectableMediaTile(
+                imageUri = Uri.EMPTY,
+                selected = true,
                 onToggleSelected = {},
                 metadataText = "4.2 MB · 4032\u00D73024",
             )

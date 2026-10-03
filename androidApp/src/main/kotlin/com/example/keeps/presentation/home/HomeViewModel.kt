@@ -1,8 +1,10 @@
 package com.example.keeps.presentation.home
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
+import com.example.keeps.data.scan.ScanResultsRepository
+import com.example.keeps.domain.usecase.GroupPhotosUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -17,12 +19,19 @@ private const val SCAN_STEP_DELAY_MS = 90L
 private const val SCAN_STEP_INCREMENT = 0.08f
 
 /**
- * Drives the Home screen's Upload -> (simulated) Scanning flow. There is no real
- * photo picker or dedup engine yet — choosing photos simply plays a simulated
- * progress animation and then signals [HomeEvent.ScanCompleted] so the app can
- * switch the bottom-nav selection to Results.
+ * Drives the Home screen's pick-photos -> Scanning flow. [onPhotosPicked] is
+ * called with the URIs returned by the system photo picker (already capped at
+ * [com.example.keeps.domain.usecase.MAX_SCAN_PHOTOS] by the picker itself):
+ * their metadata is loaded, grouped via [groupPhotosUseCase] (currently a
+ * hardcoded/random placeholder, not real similarity analysis), and the result
+ * fully replaces whatever the previous scan produced in
+ * [scanResultsRepository]. The progress animation is still simulated for now,
+ * independent of the (fast, local) metadata-loading work.
  */
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val groupPhotosUseCase: GroupPhotosUseCase,
+    private val scanResultsRepository: ScanResultsRepository,
+) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Idle)
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -30,12 +39,13 @@ class HomeViewModel : ViewModel() {
     private val _events = Channel<HomeEvent>()
     val events: Flow<HomeEvent> = _events.receiveAsFlow()
 
-    private var scanJob: Job? = null
-
-    fun onChoosePhotosClicked() {
-        if (_state.value is HomeUiState.Scanning) return
-        scanJob = viewModelScope.launch {
+    fun onPhotosPicked(uris: List<Uri>) {
+        if (uris.isEmpty() || _state.value is HomeUiState.Scanning) return
+        viewModelScope.launch {
             _state.update { HomeUiState.Scanning(0f) }
+            val groups = groupPhotosUseCase(uris)
+            scanResultsRepository.setResults(groups)
+
             var progress = 0f
             while (progress < 1f) {
                 delay(SCAN_STEP_DELAY_MS)

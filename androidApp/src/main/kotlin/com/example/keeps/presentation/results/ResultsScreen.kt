@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keeps.R
 import com.example.keeps.presentation.results.model.PhotoGroupUi
 import com.example.keeps.presentation.ui.components.EmptyState
@@ -38,6 +37,7 @@ import com.example.keeps.presentation.ui.components.buttons.DeleteButton
 import com.example.keeps.presentation.ui.components.buttons.SecondaryButton
 import com.example.keeps.presentation.ui.components.buttons.XsButton
 import com.example.keeps.presentation.ui.theme.KeepsTheme
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Entry point for the Results tab: collects [ResultsViewModel] state and renders
@@ -47,9 +47,9 @@ import com.example.keeps.presentation.ui.theme.KeepsTheme
 fun ResultsScreen(
     onStartNewScan: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ResultsViewModel = viewModel(),
+    viewModel: ResultsViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.resultsState.collectAsStateWithLifecycle()
 
     ResultsView(
         state = state,
@@ -219,11 +219,11 @@ private fun GroupCard(
                 ) {
                     rowPhotos.forEach { photo ->
                         SelectableMediaTile(
-                            background = photo.placeholder,
                             selected = photo.id in selectedPhotoIds,
                             onToggleSelected = {
                                 onAction(ResultsAction.TogglePhotoSelected(photo.id))
                             },
+                            imageUri = photo.imageUri,
                             metadataText = "${photo.sizeText} \u00B7 ${photo.dimensionsText}",
                             modifier = Modifier.weight(1f),
                         )

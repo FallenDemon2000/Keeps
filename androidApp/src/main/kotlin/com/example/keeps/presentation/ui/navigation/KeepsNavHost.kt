@@ -5,7 +5,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,8 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.keeps.R
+import com.example.keeps.data.scan.ScanResultsRepository
 import com.example.keeps.presentation.home.HomeScreen
-import com.example.keeps.presentation.results.FakeResultsData
 import com.example.keeps.presentation.results.ResultsScreen
 import com.example.keeps.presentation.settings.SettingsScreen
 import com.example.keeps.presentation.ui.icons.Icons
@@ -22,6 +24,7 @@ import com.example.keeps.presentation.ui.navigation.Screen.HomeScreen
 import com.example.keeps.presentation.ui.navigation.Screen.ResultsScreen
 import com.example.keeps.presentation.ui.navigation.Screen.SettingsScreen
 import com.example.keeps.presentation.ui.theme.ThemeMode
+import org.koin.compose.koinInject
 
 private val TopLevelRoutes = listOf(HomeScreen, ResultsScreen, SettingsScreen)
 
@@ -46,6 +49,7 @@ fun KeepsNavHost(
     val currentRoute = backStackEntry?.destination?.route
     val selectedIndex = TopLevelRoutes.indexOfFirst { it::class.qualifiedName == currentRoute }
         .coerceAtLeast(0)
+    val resultsBadgeCount = resultsBadgeCount()
 
     Scaffold(
         modifier = modifier,
@@ -59,7 +63,7 @@ fun KeepsNavHost(
                     BottomNavItem(
                         label = stringResource(id = R.string.results),
                         icon = Icons.Search,
-                        badgeCount = FakeResultsData.sampleGroups.size,
+                        badgeCount = resultsBadgeCount,
                     ),
                     BottomNavItem(
                         label = stringResource(id = R.string.settings),
@@ -100,4 +104,17 @@ private fun navigateToTopLevel(navController: NavHostController, route: Any) {
         launchSingleTop = true
         restoreState = true
     }
+}
+
+/**
+ * Number of duplicate groups from the latest scan, shown as the Results tab
+ * badge. Falls back to 0 in `@Preview` (no Koin instance is running there)
+ * instead of resolving [ScanResultsRepository] via DI.
+ */
+@Composable
+private fun resultsBadgeCount(): Int {
+    if (LocalInspectionMode.current) return 0
+    val scanResultsRepository = koinInject<ScanResultsRepository>()
+    val groups by scanResultsRepository.groups.collectAsStateWithLifecycle()
+    return groups.size
 }

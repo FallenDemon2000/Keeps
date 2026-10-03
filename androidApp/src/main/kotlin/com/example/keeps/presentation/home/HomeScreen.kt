@@ -1,6 +1,9 @@
 package com.example.keeps.presentation.home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,24 +30,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keeps.R
+import com.example.keeps.domain.usecase.MAX_SCAN_PHOTOS
 import com.example.keeps.presentation.ui.components.LoadingState
 import com.example.keeps.presentation.ui.components.PageHeader
 import com.example.keeps.presentation.ui.components.buttons.PrimaryButton
 import com.example.keeps.presentation.ui.theme.KeepsTheme
+import org.koin.androidx.compose.koinViewModel
 
 /**
- * Entry point for the Home tab: collects [HomeViewModel] state, observes the
- * one-time scan-completed event, and renders [HomeView].
+ * Entry point for the Home tab: collects [HomeViewModel] state, launches the
+ * system photo picker (capped at [MAX_SCAN_PHOTOS] images, local-only — no
+ * network upload), observes the one-time scan-completed event, and renders
+ * [HomeView].
  */
 @Composable
 fun HomeScreen(
     onScanCompleted: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(),
+    viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val pickPhotos = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = MAX_SCAN_PHOTOS),
+    ) { uris -> viewModel.onPhotosPicked(uris) }
+
+    val onChoosePhotosClicked = {
+        val request = PickVisualMediaRequest(
+            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly,
+        )
+        pickPhotos.launch(request)
+    }
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
@@ -56,7 +73,7 @@ fun HomeScreen(
 
     HomeView(
         state = state,
-        onChoosePhotosClicked = { viewModel.onChoosePhotosClicked() },
+        onChoosePhotosClicked = onChoosePhotosClicked,
         modifier = modifier,
     )
 }
