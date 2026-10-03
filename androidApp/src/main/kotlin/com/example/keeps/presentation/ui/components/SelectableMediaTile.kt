@@ -104,7 +104,7 @@ private fun MediaCheckBox(
     var backgroundColor = KeepsTheme.colorScheme.primary
     var borderColor = KeepsTheme.colorScheme.primary
 
-    if (isSelected) {
+    if (!isSelected) {
         backgroundColor = Color.Black.copy(alpha = 0.4f)
         borderColor = Color.White.copy(alpha = 0.5f)
     }
