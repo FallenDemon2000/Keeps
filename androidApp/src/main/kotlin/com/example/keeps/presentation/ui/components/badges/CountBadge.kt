@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,13 +26,13 @@ fun CountBadge(
         modifier = modifier
             .size(16.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary),
+            .background(KeepsTheme.colorScheme.primary),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = count.toString(),
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = KeepsTheme.typography.labelSmall.copy(fontSize = 9.sp),
+            color = KeepsTheme.colorScheme.onPrimary,
         )
     }
 }

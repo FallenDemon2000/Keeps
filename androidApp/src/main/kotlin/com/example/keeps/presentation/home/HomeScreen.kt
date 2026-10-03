@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -120,13 +119,13 @@ private fun HomeContent(
         Column {
             Text(
                 text = "Find & remove\nduplicate photos",
-                style = MaterialTheme.typography.headlineSmall,
+                style = KeepsTheme.typography.headlineSmall,
             )
             Text(
                 text = "Upload photos and Dedup will group visually similar images so " +
                     "you can choose which ones to delete.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KeepsTheme.typography.bodySmall,
+                color = KeepsTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 6.dp),
             )
         }
@@ -143,8 +142,8 @@ private fun SelectPhotosPlaceholder(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
-            .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surface)
+            .border(2.dp, KeepsTheme.colorScheme.outline, RoundedCornerShape(20.dp))
+            .background(KeepsTheme.colorScheme.surface)
             .padding(vertical = 40.dp, horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -152,20 +151,20 @@ private fun SelectPhotosPlaceholder(
             modifier = Modifier
                 .size(64.dp)
                 .clip(RoundedCornerShape(18.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(KeepsTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
             Text(text = "\uD83D\uDDBC\uFE0F", fontSize = 28.sp)
         }
         Text(
             text = "Tap to select photos",
-            style = MaterialTheme.typography.bodyLarge,
+            style = KeepsTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = 14.dp),
         )
         Text(
             text = "JPEG · PNG · WEBP · HEIC",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 4.dp),
             textAlign = TextAlign.Center,
         )
@@ -205,7 +204,7 @@ private fun FeatureCard(
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surface)
+            .background(KeepsTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -213,8 +212,8 @@ private fun FeatureCard(
         Text(text = icon, fontSize = 18.sp)
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

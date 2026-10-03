@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,20 +27,20 @@ fun SimilarityBadge(
             .clip(RoundedCornerShape(6.dp))
             .background(
                 if (isHighSimilarity) {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                    KeepsTheme.colorScheme.primary.copy(alpha = 0.15f)
                 } else {
-                    MaterialTheme.colorScheme.surfaceVariant
+                    KeepsTheme.colorScheme.surfaceVariant
                 },
             )
             .padding(horizontal = 8.dp, vertical = 3.dp),
     ) {
         Text(
             text = percentText,
-            style = MaterialTheme.typography.labelMedium,
+            style = KeepsTheme.typography.labelMedium,
             color = if (isHighSimilarity) {
-                MaterialTheme.colorScheme.primary
+                KeepsTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
+                KeepsTheme.colorScheme.onSurfaceVariant
             },
         )
     }

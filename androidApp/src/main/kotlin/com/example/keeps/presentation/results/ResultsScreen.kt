@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -153,12 +152,12 @@ private fun ResultsStats(
         Row {
             Text(
                 text = "$groupCount groups",
-                style = MaterialTheme.typography.titleSmall,
+                style = KeepsTheme.typography.titleSmall,
             )
             Text(
                 text = " \u00B7 $totalPhotoCount photos",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KeepsTheme.typography.bodyMedium,
+                color = KeepsTheme.colorScheme.onSurfaceVariant,
             )
         }
         SecondaryButton(text = "New scan", onClick = onStartNewScan)
@@ -191,8 +190,8 @@ private fun GroupCard(
                 )
                 Text(
                     text = "${group.photos.size} similar photos",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KeepsTheme.typography.bodySmall,
+                    color = KeepsTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -250,17 +249,17 @@ private fun DeleteBar(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surface)
+            .background(KeepsTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column {
-            Text(text = "$selectedCount selected", style = MaterialTheme.typography.titleSmall)
+            Text(text = "$selectedCount selected", style = KeepsTheme.typography.titleSmall)
             Text(
                 text = "%.1f MB freed".format(freedMb),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KeepsTheme.typography.bodySmall,
+                color = KeepsTheme.colorScheme.onSurfaceVariant,
             )
         }
         Row(

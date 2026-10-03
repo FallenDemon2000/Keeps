@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +29,7 @@ fun KeepsLinearProgress(
             .fillMaxWidth()
             .height(5.dp)
             .clip(RoundedCornerShape(100.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .background(KeepsTheme.colorScheme.surfaceVariant),
     ) {
         Box(
             modifier = Modifier
@@ -38,7 +37,7 @@ fun KeepsLinearProgress(
                 .fillMaxWidth(progress.coerceIn(0f, 1f))
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(100.dp))
-                .background(MaterialTheme.colorScheme.primary),
+                .background(KeepsTheme.colorScheme.primary),
         )
     }
 }

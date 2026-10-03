@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -111,7 +110,7 @@ private fun SettingsView(
                     }
                     SettingsDivider()
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Grouping method", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "Grouping method", style = KeepsTheme.typography.bodyMedium)
                         SegmentedControl(
                             options = GroupingOptions.map { it.label },
                             selectedIndex = GroupingOptions.indexOf(state.groupingMethod),
@@ -175,7 +174,7 @@ private fun SettingsView(
                     }
                     SettingsDivider()
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Sort groups by", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "Sort groups by", style = KeepsTheme.typography.bodyMedium)
                         SegmentedControl(
                             options = SortOptions.map { it.label },
                             selectedIndex = SortOptions.indexOf(state.sortOption),
@@ -200,17 +199,17 @@ private fun SettingsView(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(MaterialTheme.colorScheme.primary),
+                                .background(KeepsTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text(text = "\u25C8", color = MaterialTheme.colorScheme.onPrimary)
+                            Text(text = "\u25C8", color = KeepsTheme.colorScheme.onPrimary)
                         }
                         Column {
-                            Text(text = "Dedup", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "Dedup", style = KeepsTheme.typography.bodyMedium)
                             Text(
                                 text = "Version 1.0 \u00B7 All processing on-device",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = KeepsTheme.typography.bodySmall,
+                                color = KeepsTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -248,12 +247,12 @@ private fun SettingsRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = label, style = MaterialTheme.typography.bodyMedium)
+            Text(text = label, style = KeepsTheme.typography.bodyMedium)
             if (description != null) {
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KeepsTheme.typography.bodySmall,
+                    color = KeepsTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp),
                 )
             }
@@ -266,7 +265,7 @@ private fun SettingsRow(
 private fun SettingsDivider() {
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = 16.dp),
-        color = MaterialTheme.colorScheme.outline,
+        color = KeepsTheme.colorScheme.outline,
     )
 }
 

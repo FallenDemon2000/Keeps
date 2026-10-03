@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -88,8 +87,8 @@ private fun MediaCheckBox(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var backgroundColor = MaterialTheme.colorScheme.primary
-    var borderColor = MaterialTheme.colorScheme.primary
+    var backgroundColor = KeepsTheme.colorScheme.primary
+    var borderColor = KeepsTheme.colorScheme.primary
 
     if (isSelected) {
         backgroundColor = Color.Black.copy(alpha = 0.4f)
@@ -107,7 +106,7 @@ private fun MediaCheckBox(
             Icon(
                 imageVector = Icons.Check,
                 contentDescription = "Selected for deletion",
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = KeepsTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(14.dp),
             )
         }
@@ -122,7 +121,7 @@ private fun MediaMetadataOverlay(
     Box(modifier = modifier) {
         Text(
             text = metadataText,
-            style = MaterialTheme.typography.labelSmall,
+            style = KeepsTheme.typography.labelSmall,
             color = Color.White,
         )
     }

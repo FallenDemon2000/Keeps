@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,7 +35,7 @@ fun SegmentedControl(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(KeepsTheme.colorScheme.surfaceVariant)
             .padding(2.dp)
             .selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -48,7 +47,7 @@ fun SegmentedControl(
                     .weight(1f)
                     .clip(RoundedCornerShape(8.dp))
                     .background(
-                        if (selected) MaterialTheme.colorScheme.surface else Color.Transparent,
+                        if (selected) KeepsTheme.colorScheme.surface else Color.Transparent,
                     )
                     .selectable(selected = selected, onClick = { onOptionSelected(index) })
                     .padding(vertical = 6.dp, horizontal = 4.dp),
@@ -56,11 +55,11 @@ fun SegmentedControl(
             ) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp),
+                    style = KeepsTheme.typography.bodyMedium.copy(fontSize = 11.sp),
                     color = if (selected) {
-                        MaterialTheme.colorScheme.onSurface
+                        KeepsTheme.colorScheme.onSurface
                     } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        KeepsTheme.colorScheme.onSurfaceVariant
                     },
                     textAlign = TextAlign.Center,
                 )
