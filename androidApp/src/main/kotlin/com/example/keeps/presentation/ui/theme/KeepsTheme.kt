@@ -1,7 +1,9 @@
 package com.example.keeps.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -56,7 +58,15 @@ fun KeepsTheme(
 }
 
 object KeepsTheme {
+    val colorScheme: ColorScheme
+        @Composable
+        get() = MaterialTheme.colorScheme
+
     val gradients: AppGradients
         @Composable
         get() = LocalKeepsGradients.current
+
+    val typography: Typography
+        @Composable
+        get() = MaterialTheme.typography
 }
