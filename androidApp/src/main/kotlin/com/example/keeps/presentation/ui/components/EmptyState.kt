@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.keeps.presentation.ui.components.buttons.SecondaryButton
+import com.example.keeps.presentation.ui.components.buttons.ActionButton
 import com.example.keeps.presentation.ui.theme.KeepsTheme
 
 /**
@@ -50,7 +50,12 @@ fun EmptyState(
         )
         if (actionLabel != null && onActionClick != null) {
             Spacer(modifier = Modifier.height(16.dp))
-            SecondaryButton(text = actionLabel, onClick = onActionClick)
+            ActionButton(
+                text = actionLabel,
+                onClick = onActionClick,
+                textColor = KeepsTheme.colorScheme.onSurfaceVariant,
+                backgroundColor = KeepsTheme.colorScheme.surfaceVariant,
+            )
         }
     }
 }
