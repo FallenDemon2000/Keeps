@@ -3,6 +3,7 @@ package com.example.keeps.presentation.ui.components.buttons
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.keeps.presentation.ui.theme.KeepsTheme
-import androidx.compose.material3.Button as Material3Button
 
 /**
  * Extra-small pill button used inline within group headers (btn-xs, e.g. "All" / "None").
@@ -23,7 +23,7 @@ fun XsButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Material3Button(
+    Button(
         onClick = onClick,
         modifier = modifier.height(28.dp),
         enabled = enabled,

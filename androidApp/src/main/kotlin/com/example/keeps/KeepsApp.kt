@@ -6,12 +6,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keeps.presentation.ui.navigation.KeepsNavHost
 import com.example.keeps.presentation.ui.theme.KeepsTheme
-import com.example.keeps.presentation.ui.theme.ThemeMode
 import com.example.keeps.presentation.ui.theme.ThemeViewModel
 import com.example.keeps.presentation.ui.theme.resolveDarkTheme
 
@@ -35,27 +33,5 @@ fun KeepsApp(themeViewModel: ThemeViewModel = viewModel()) {
                 onThemeModeChange = themeViewModel::setThemeMode,
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun KeepsAppPreview() {
-    KeepsTheme {
-        KeepsNavHost(
-            themeMode = ThemeMode.Light,
-            onThemeModeChange = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun KeepsAppDarkPreview() {
-    KeepsTheme(darkTheme = true) {
-        KeepsNavHost(
-            themeMode = ThemeMode.Dark,
-            onThemeModeChange = {},
-        )
     }
 }

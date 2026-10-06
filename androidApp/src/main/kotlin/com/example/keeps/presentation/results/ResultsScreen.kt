@@ -32,8 +32,7 @@ import com.example.keeps.presentation.ui.components.KeepsCard
 import com.example.keeps.presentation.ui.components.PageHeader
 import com.example.keeps.presentation.ui.components.SelectableMediaTile
 import com.example.keeps.presentation.ui.components.badges.SimilarityBadge
-import com.example.keeps.presentation.ui.components.buttons.DeleteButton
-import com.example.keeps.presentation.ui.components.buttons.SecondaryButton
+import com.example.keeps.presentation.ui.components.buttons.ActionButton
 import com.example.keeps.presentation.ui.components.buttons.XsButton
 import com.example.keeps.presentation.ui.theme.KeepsTheme
 import org.koin.androidx.compose.koinViewModel
@@ -116,18 +115,19 @@ private fun ResultsContent(
                 items(items = state.groups, key = { it.id }) { group ->
                     GroupCard(
                         group = group,
-                        selectedPhotoIds = state.selectedPhotoIds,
+                        selectedPhotoIds = state.selectedPhotoIds.values.flatten(),
                         onAction = onAction,
                     )
                 }
             }
 
             if (state.selectedCount > 0) {
-                DeleteBar(
+                ActionBar(
                     selectedCount = state.selectedCount,
                     selectedBytes = state.selectedBytes,
                     onClear = { onAction(ResultsAction.ClearSelection) },
                     onDelete = { onAction(ResultsAction.DeleteSelected) },
+                    onKeep = { onAction(ResultsAction.KeepSelected) },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -160,7 +160,12 @@ private fun ResultsStats(
                 color = KeepsTheme.colorScheme.onSurfaceVariant,
             )
         }
-        SecondaryButton(text = "New scan", onClick = onStartNewScan)
+        ActionButton(
+            text = "New scan",
+            onClick = onStartNewScan,
+            textColor = KeepsTheme.colorScheme.onSurfaceVariant,
+            backgroundColor = KeepsTheme.colorScheme.surfaceVariant,
+        )
     }
 }
 
@@ -168,7 +173,7 @@ private fun ResultsStats(
 @Suppress("LongMethod")
 private fun GroupCard(
     group: PhotoGroupUi,
-    selectedPhotoIds: Set<String>,
+    selectedPhotoIds: List<String>,
     onAction: (ResultsAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -220,7 +225,7 @@ private fun GroupCard(
                         SelectableMediaTile(
                             selected = photo.id in selectedPhotoIds,
                             onToggleSelected = {
-                                onAction(ResultsAction.TogglePhotoSelected(photo.id))
+                                onAction(ResultsAction.TogglePhotoSelected(group.id, photo.id))
                             },
                             imageUri = photo.imageUri,
                             metadataText = "${photo.sizeText} \u00B7 ${photo.dimensionsText}",
@@ -237,11 +242,12 @@ private fun GroupCard(
 }
 
 @Composable
-private fun DeleteBar(
+private fun ActionBar(
     selectedCount: Int,
     selectedBytes: Long,
     onClear: () -> Unit,
     onDelete: () -> Unit,
+    onKeep: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val freedMb = selectedBytes / 1_000_000.0
@@ -266,8 +272,26 @@ private fun DeleteBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SecondaryButton(text = "Clear", onClick = onClear)
-            DeleteButton(text = "Delete $selectedCount", onClick = onDelete)
+            ActionButton(
+                text = "Clear",
+                onClick = onClear,
+                textColor = KeepsTheme.colorScheme.onSurfaceVariant,
+                backgroundColor = KeepsTheme.colorScheme.surfaceVariant,
+            )
+
+            ActionButton(
+                text = "Delete",
+                onClick = onDelete,
+                textColor = KeepsTheme.colorScheme.onError,
+                backgroundColor = KeepsTheme.colorScheme.error,
+            )
+
+            ActionButton(
+                text = "Keep",
+                onClick = onKeep,
+                textColor = KeepsTheme.colorScheme.onPrimary,
+                backgroundColor = KeepsTheme.colorScheme.primary,
+            )
         }
     }
 }
@@ -281,7 +305,7 @@ private fun ResultsPopulatedPreview() {
             ResultsView(
                 state = ResultsUiState(
                     groups = FakeResultsData.sampleGroups,
-                    selectedPhotoIds = setOf("photo-1b", "photo-1c"),
+                    selectedPhotoIds = mapOf("group-1" to setOf("photo-1b", "photo-1c")),
                 ),
                 onAction = {},
                 onStartNewScan = {},
@@ -299,7 +323,7 @@ private fun ResultsPopulatedDarkPreview() {
             ResultsView(
                 state = ResultsUiState(
                     groups = FakeResultsData.sampleGroups,
-                    selectedPhotoIds = setOf("photo-1b", "photo-1c"),
+                    selectedPhotoIds = mapOf("group-1" to setOf("photo-1b", "photo-1c")),
                 ),
                 onAction = {},
                 onStartNewScan = {},

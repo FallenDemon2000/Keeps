@@ -29,11 +29,13 @@ class ResultsViewModel(
 
     fun onAction(action: ResultsAction) {
         when (action) {
-            is ResultsAction.TogglePhotoSelected -> togglePhotoSelected(action.photoId)
             is ResultsAction.SelectAllInGroup -> selectAllInGroup(action.groupId)
             is ResultsAction.SelectNoneInGroup -> selectNoneInGroup(action.groupId)
-            ResultsAction.ClearSelection -> clearSelection()
-            ResultsAction.DeleteSelected -> deleteSelected()
+            is ResultsAction.ClearSelection -> clearSelection()
+            is ResultsAction.DeleteSelected -> deleteSelected()
+            is ResultsAction.KeepSelected -> keepSelected()
+            is ResultsAction.TogglePhotoSelected ->
+                togglePhotoSelected(action.groupId, action.photoId)
         }
     }
 
@@ -47,10 +49,20 @@ class ResultsViewModel(
         }
     }
 
-    private fun togglePhotoSelected(photoId: String) {
+    private fun togglePhotoSelected(groupId: String, photoId: String) {
         _resultsState.update { current ->
-            val updated = current.selectedPhotoIds.toMutableSet()
-            if (!updated.add(photoId)) updated.remove(photoId)
+            val updated = current.selectedPhotoIds.toMutableMap()
+            when {
+                !updated.containsKey(groupId) ->
+                    updated[groupId] = mutableSetOf(photoId)
+
+                !updated[groupId]!!.contains(photoId) ->
+                    updated[groupId] = updated[groupId]!! + photoId
+
+                else ->
+                    updated[groupId] = updated[groupId]!! - photoId
+            }
+
             current.copy(selectedPhotoIds = updated)
         }
     }
@@ -58,29 +70,40 @@ class ResultsViewModel(
     private fun selectAllInGroup(groupId: String) {
         val group = resultsState.value.groups.firstOrNull { it.id == groupId } ?: return
         val groupPhotoIds = group.photos.map { it.id }.toSet()
+        val updated = _resultsState.value.selectedPhotoIds.plus(groupId to groupPhotoIds)
 
-        _resultsState.update {
-            it.copy(selectedPhotoIds = it.selectedPhotoIds + groupPhotoIds)
-        }
+        _resultsState.update { it.copy(selectedPhotoIds = updated) }
     }
 
     private fun selectNoneInGroup(groupId: String) {
-        val group = resultsState.value.groups.firstOrNull { it.id == groupId } ?: return
-        val groupPhotoIds = group.photos.map { it.id }.toSet()
-
-        _resultsState.update {
-            it.copy(selectedPhotoIds = it.selectedPhotoIds - groupPhotoIds)
-        }
+        val updated = _resultsState.value.selectedPhotoIds.minus(groupId)
+        _resultsState.update { it.copy(selectedPhotoIds = updated) }
     }
 
     private fun clearSelection() {
-        _resultsState.update { it.copy(selectedPhotoIds = emptySet()) }
+        _resultsState.update { it.copy(selectedPhotoIds = emptyMap()) }
     }
 
     private fun deleteSelected() {
         val selected = _resultsState.value.selectedPhotoIds
         val updatedGroups = scanResultsRepository.groups.value
-            .map { group -> group.copy(photos = group.photos.filterNot { it.id in selected }) }
+            .map { group ->
+                val deleteIds = selected[group.id] ?: return@map group
+                group.copy(photos = group.photos.filter { it.id !in deleteIds })
+            }
+            .filter { it.photos.isNotEmpty() }
+
+        scanResultsRepository.setResults(updatedGroups)
+        clearSelection()
+    }
+
+    private fun keepSelected() {
+        val selected = _resultsState.value.selectedPhotoIds
+        val updatedGroups = scanResultsRepository.groups.value
+            .map { group ->
+                val keepIds = selected[group.id] ?: return@map group
+                group.copy(photos = group.photos.filter { it.id in keepIds })
+            }
             .filter { it.photos.isNotEmpty() }
 
         scanResultsRepository.setResults(updatedGroups)
