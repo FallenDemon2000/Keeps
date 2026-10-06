@@ -115,7 +115,7 @@ private fun ResultsContent(
                 items(items = state.groups, key = { it.id }) { group ->
                     GroupCard(
                         group = group,
-                        selectedPhotoIds = state.selectedPhotoIds,
+                        selectedPhotoIds = state.selectedPhotoIds.values.flatten(),
                         onAction = onAction,
                     )
                 }
@@ -127,6 +127,7 @@ private fun ResultsContent(
                     selectedBytes = state.selectedBytes,
                     onClear = { onAction(ResultsAction.ClearSelection) },
                     onDelete = { onAction(ResultsAction.DeleteSelected) },
+                    onKeep = { onAction(ResultsAction.KeepSelected) },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -246,6 +247,7 @@ private fun ActionBar(
     selectedBytes: Long,
     onClear: () -> Unit,
     onDelete: () -> Unit,
+    onKeep: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val freedMb = selectedBytes / 1_000_000.0
@@ -283,6 +285,13 @@ private fun ActionBar(
                 textColor = KeepsTheme.colorScheme.onError,
                 backgroundColor = KeepsTheme.colorScheme.error,
             )
+
+            ActionButton(
+                text = "Keep",
+                onClick = onKeep,
+                textColor = KeepsTheme.colorScheme.onPrimary,
+                backgroundColor = KeepsTheme.colorScheme.primary,
+            )
         }
     }
 }
@@ -296,7 +305,7 @@ private fun ResultsPopulatedPreview() {
             ResultsView(
                 state = ResultsUiState(
                     groups = FakeResultsData.sampleGroups,
-                    selectedPhotoIds = setOf("photo-1b", "photo-1c"),
+                    selectedPhotoIds = mapOf("group-1" to setOf("photo-1b", "photo-1c")),
                 ),
                 onAction = {},
                 onStartNewScan = {},
@@ -314,7 +323,7 @@ private fun ResultsPopulatedDarkPreview() {
             ResultsView(
                 state = ResultsUiState(
                     groups = FakeResultsData.sampleGroups,
-                    selectedPhotoIds = setOf("photo-1b", "photo-1c"),
+                    selectedPhotoIds = mapOf("group-1" to setOf("photo-1b", "photo-1c")),
                 ),
                 onAction = {},
                 onStartNewScan = {},
