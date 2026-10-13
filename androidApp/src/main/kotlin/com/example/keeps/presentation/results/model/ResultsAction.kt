@@ -1,4 +1,4 @@
-package com.example.keeps.presentation.results
+package com.example.keeps.presentation.results.model
 
 /**
  * User intents for the Results screen.
@@ -10,4 +10,5 @@ sealed interface ResultsAction {
     data object ClearSelection : ResultsAction
     data object DeleteSelected : ResultsAction
     data object KeepSelected : ResultsAction
+    data class DeleteConfirmed(val photoIds: Set<String>) : ResultsAction
 }

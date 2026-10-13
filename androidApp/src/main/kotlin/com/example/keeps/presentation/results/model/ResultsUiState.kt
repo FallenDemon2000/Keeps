@@ -1,6 +1,4 @@
-package com.example.keeps.presentation.results
-
-import com.example.keeps.presentation.results.model.PhotoGroupUi
+package com.example.keeps.presentation.results.model
 
 /**
  * Renderable state for the Results screen.
