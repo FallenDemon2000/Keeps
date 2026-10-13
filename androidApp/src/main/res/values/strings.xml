@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">Keeps</string>
+    <string name="app_name">"Keeps"</string>
 
     <!--  SCREEN RESOURCE STRINGS  -->
-    <string name="home">Home</string>
-    <string name="results">Results</string>
-    <string name="settings">Settings</string>
+    <string name="home">"Home"</string>
+    <string name="results">"Results"</string>
+    <string name="settings">"Settings"</string>
+    <string name="photo_access_required">"Photo access is needed to delete photos"</string>
+    <string name="delete_failed">"Couldn't delete photos"</string>
 </resources>

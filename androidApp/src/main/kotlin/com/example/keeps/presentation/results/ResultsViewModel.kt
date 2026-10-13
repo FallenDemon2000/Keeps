@@ -1,24 +1,39 @@
 package com.example.keeps.presentation.results
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keeps.data.scan.ScanResultsRepository
+import com.example.keeps.domain.usecase.CreateDeleteRequestUseCase
+import com.example.keeps.ktx.runOrNull
+import com.example.keeps.presentation.results.model.ResultsAction
+import com.example.keeps.presentation.results.model.ResultsEvent
+import com.example.keeps.presentation.results.model.ResultsUiState
 import com.example.keeps.presentation.toUiGroups
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
  * Owns the Results screen's selection state over the latest scan's groups,
  * read from [ScanResultsRepository] (populated by `HomeViewModel`'s real photo
- * picker + placeholder grouping flow). "New scan"/delete actions only mutate
- * selection and the repository's in-memory groups — no photos are removed
- * from device storage yet (see `ScanResultsRepository` for that caveat).
+ * picker + placeholder grouping flow). Deleting is a two-step flow: the
+ * selected photos' deletion is requested via [ResultsEvent.RequestDelete]
+ * (system confirmation dialog); only once the UI reports
+ * [ResultsAction.DeleteConfirmed] are they removed from the in-memory groups.
+ * Cancelling leaves the list and selection untouched.
  */
 class ResultsViewModel(
     private val scanResultsRepository: ScanResultsRepository,
+    private val createDeleteRequest: CreateDeleteRequestUseCase,
 ) : ViewModel() {
+
+    private val _events = Channel<ResultsEvent>(Channel.BUFFERED)
+    val events: Flow<ResultsEvent> = _events.receiveAsFlow()
 
     private val _resultsState = MutableStateFlow(ResultsUiState())
     val resultsState: StateFlow<ResultsUiState> = _resultsState
@@ -32,8 +47,9 @@ class ResultsViewModel(
             is ResultsAction.SelectAllInGroup -> selectAllInGroup(action.groupId)
             is ResultsAction.SelectNoneInGroup -> selectNoneInGroup(action.groupId)
             is ResultsAction.ClearSelection -> clearSelection()
-            is ResultsAction.DeleteSelected -> deleteSelected()
-            is ResultsAction.KeepSelected -> keepSelected()
+            is ResultsAction.DeleteSelected -> requestDelete()
+            is ResultsAction.KeepSelected -> requestKeep()
+            is ResultsAction.DeleteConfirmed -> removeDeleted(action.photoIds)
             is ResultsAction.TogglePhotoSelected ->
                 togglePhotoSelected(action.groupId, action.photoId)
         }
@@ -84,29 +100,45 @@ class ResultsViewModel(
         _resultsState.update { it.copy(selectedPhotoIds = emptyMap()) }
     }
 
-    private fun deleteSelected() {
+    private fun requestDelete() {
+        val selectedIds = _resultsState.value.selectedPhotoIds.values.flatten().toSet()
+        val photos = scanResultsRepository.groups.value
+            .flatMap { it.photos }
+            .filter { it.id in selectedIds }
+
+        if (photos.isEmpty()) return
+        sendDeleteRequestEvent(photos.map { it.uri })
+    }
+
+    private fun requestKeep() {
         val selected = _resultsState.value.selectedPhotoIds
-        val updatedGroups = scanResultsRepository.groups.value
-            .map { group ->
-                val deleteIds = selected[group.id] ?: return@map group
-                group.copy(photos = group.photos.filter { it.id !in deleteIds })
+        val photos = scanResultsRepository.groups.value
+            .flatMap { group ->
+                val keepIds = selected[group.id] ?: return@flatMap emptyList()
+                group.photos.filter { it.id !in keepIds }
             }
+
+        if (photos.isEmpty()) return
+        sendDeleteRequestEvent(photos.map { it.uri })
+    }
+
+    private fun removeDeleted(photoIds: Set<String>) {
+        val updatedGroups = scanResultsRepository.groups.value
+            .map { group -> group.copy(photos = group.photos.filter { it.id !in photoIds }) }
             .filter { it.photos.isNotEmpty() }
 
         scanResultsRepository.setResults(updatedGroups)
         clearSelection()
     }
 
-    private fun keepSelected() {
-        val selected = _resultsState.value.selectedPhotoIds
-        val updatedGroups = scanResultsRepository.groups.value
-            .map { group ->
-                val keepIds = selected[group.id] ?: return@map group
-                group.copy(photos = group.photos.filter { it.id in keepIds })
-            }
-            .filter { it.photos.isNotEmpty() }
+    private fun sendDeleteRequestEvent(uris: List<Uri>) {
+        val event = runOrNull {
+            ResultsEvent.RequestDelete(
+                intentSender = createDeleteRequest(uris),
+                photoIds = uris.map { it.toString() }.toSet(),
+            )
+        }
 
-        scanResultsRepository.setResults(updatedGroups)
-        clearSelection()
+        _events.trySend(event ?: ResultsEvent.DeleteFailed)
     }
 }

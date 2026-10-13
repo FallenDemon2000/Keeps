@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.keeps.R
 import com.example.keeps.presentation.results.model.PhotoGroupUi
+import com.example.keeps.presentation.results.model.ResultsAction
+import com.example.keeps.presentation.results.model.ResultsUiState
 import com.example.keeps.presentation.ui.components.EmptyState
 import com.example.keeps.presentation.ui.components.KeepsCard
 import com.example.keeps.presentation.ui.components.PageHeader
@@ -48,10 +50,12 @@ fun ResultsScreen(
     viewModel: ResultsViewModel = koinViewModel(),
 ) {
     val state by viewModel.resultsState.collectAsStateWithLifecycle()
+    val onAction = rememberResultsActionHandler(viewModel::onAction)
+    ResultsEffects(events = viewModel.events, onAction = viewModel::onAction)
 
     ResultsView(
         state = state,
-        onAction = viewModel::onAction,
+        onAction = onAction,
         onStartNewScan = onStartNewScan,
         modifier = modifier,
     )
