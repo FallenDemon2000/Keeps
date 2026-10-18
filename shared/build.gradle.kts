@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.testing.mockk)
+            implementation(libs.testing.turbine)
         }
     }
 }

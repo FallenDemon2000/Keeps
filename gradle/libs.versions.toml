@@ -21,6 +21,7 @@ kotlinxSerialization = "1.11.0"
 material3 = "1.11.0-alpha07"
 mockk = "1.14.11"
 navigationCompose = "2.9.2"
+turbine = "1.2.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -48,6 +49,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 testing-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+testing-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
