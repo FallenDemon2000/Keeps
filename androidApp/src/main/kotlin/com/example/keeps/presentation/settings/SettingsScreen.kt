@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.keeps.R
 import com.example.keeps.presentation.ui.components.KeepsCard
 import com.example.keeps.presentation.ui.components.KeepsToggleSwitch
@@ -35,6 +34,7 @@ import com.example.keeps.presentation.ui.components.SectionLabel
 import com.example.keeps.presentation.ui.components.SegmentedControl
 import com.example.keeps.presentation.ui.theme.KeepsTheme
 import com.example.keeps.presentation.ui.theme.ThemeMode
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Entry point for the Settings tab: collects [SettingsViewModel] state and the
@@ -45,7 +45,7 @@ fun SettingsScreen(
     themeMode: ThemeMode,
     onThemeModeChange: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = viewModel(),
+    viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -98,9 +98,7 @@ private fun SettingsView(
                             label = "Similarity threshold",
                             valueText = "${(state.similarityThreshold * 100).toInt()}%",
                             value = state.similarityThreshold,
-                            onValueChange = {
-                                onAction(SettingsAction.ThresholdChanged(it))
-                            },
+                            onValueChange = { onAction(SettingsAction.ThresholdChanged(it)) },
                             description = "Lower = more matches \u00B7 Higher = " +
                                 "near-identical only",
                             minLabel = "50% loose",
