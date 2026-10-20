@@ -32,6 +32,14 @@ class SettingsRepositoryTest {
     }
 
     @Test
+    fun `WHEN get similarity threshold, THEN return current value`() = runTest {
+        assertEquals(
+            SettingsRepository.DEFAULT_SIMILARITY_THRESHOLD,
+            settingsRepository.getSimilarityThreshold(),
+        )
+    }
+
+    @Test
     fun `WHEN set similarity threshold, THEN emits updates`() = runTest {
         settingsRepository.similarityThreshold.test {
             assertEquals(SettingsRepository.DEFAULT_SIMILARITY_THRESHOLD, awaitItem())
