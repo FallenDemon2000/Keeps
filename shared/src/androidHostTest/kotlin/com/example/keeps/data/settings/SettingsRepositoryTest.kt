@@ -1,13 +1,7 @@
 package com.example.keeps.data.settings
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.preferencesOf
 import app.cash.turbine.test
 import com.example.keeps.fakes.FakeDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -33,7 +27,15 @@ class SettingsRepositoryTest {
     fun `WHEN similarity threshold, GIVEN value not set, THEN emits default`() = runTest {
         assertEquals(
             SettingsRepository.DEFAULT_SIMILARITY_THRESHOLD,
-            settingsRepository.similarityThreshold.first(),
+            settingsRepository.getSimilarityThreshold(),
+        )
+    }
+
+    @Test
+    fun `WHEN get similarity threshold, THEN return current value`() = runTest {
+        assertEquals(
+            SettingsRepository.DEFAULT_SIMILARITY_THRESHOLD,
+            settingsRepository.getSimilarityThreshold(),
         )
     }
 
@@ -54,20 +56,20 @@ class SettingsRepositoryTest {
     fun `WHEN set threshold GIVEN valid input, THEN updates threshold`() = runTest {
         settingsRepository.setSimilarityThreshold(0.55f)
 
-        assertEquals(0.55f, settingsRepository.similarityThreshold.first())
+        assertEquals(0.55f, settingsRepository.getSimilarityThreshold())
     }
 
     @Test
     fun `WHEN set threshold GIVEN value above range, THEN clamps threshold`() = runTest {
         settingsRepository.setSimilarityThreshold(1.5f)
 
-        assertEquals(1f, settingsRepository.similarityThreshold.first())
+        assertEquals(1f, settingsRepository.getSimilarityThreshold())
     }
 
     @Test
     fun `WHEN set threshold GIVEN value below range, THEN clamps threshold`() = runTest {
         settingsRepository.setSimilarityThreshold(-0.5f)
 
-        assertEquals(0f, settingsRepository.similarityThreshold.first())
+        assertEquals(0f, settingsRepository.getSimilarityThreshold())
     }
 }

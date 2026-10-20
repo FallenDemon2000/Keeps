@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 /**
@@ -19,6 +20,9 @@ class SettingsRepository(
     val similarityThreshold: Flow<Float> = dataStore.data
         .map { it[SIMILARITY_THRESHOLD_KEY] ?: DEFAULT_SIMILARITY_THRESHOLD }
         .distinctUntilChanged()
+
+    suspend fun getSimilarityThreshold(): Float =
+        similarityThreshold.first()
 
     suspend fun setSimilarityThreshold(value: Float) {
         dataStore.edit { it[SIMILARITY_THRESHOLD_KEY] = value.coerceIn(0f, 1f) }
