@@ -84,7 +84,11 @@ private fun HomeView(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        PageHeader(title = stringResource(id = R.string.app_name), showLogoBadge = true)
+        PageHeader(
+            title = stringResource(id = R.string.app_name),
+            modifier = Modifier.fillMaxWidth(),
+            showLogoBadge = true,
+        )
         when (state) {
             is HomeUiState.Scanning -> {
                 LoadingState(

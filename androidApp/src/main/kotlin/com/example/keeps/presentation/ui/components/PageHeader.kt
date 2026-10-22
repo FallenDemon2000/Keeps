@@ -28,9 +28,7 @@ fun PageHeader(
     showLogoBadge: Boolean = false,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+        modifier = modifier.padding(horizontal = 20.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -57,6 +55,10 @@ fun PageHeader(
 @Composable
 private fun PageHeaderPreview() {
     KeepsTheme(darkTheme = true) {
-        PageHeader(title = "Keeps", showLogoBadge = true)
+        PageHeader(
+            title = "Keeps",
+            modifier = Modifier.fillMaxWidth(),
+            showLogoBadge = true,
+        )
     }
 }

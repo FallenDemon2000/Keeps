@@ -70,7 +70,11 @@ private fun ResultsView(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        PageHeader(title = stringResource(id = R.string.results))
+        PageHeader(
+            title = stringResource(id = R.string.results),
+            modifier = Modifier.fillMaxWidth(),
+            showLogoBadge = false,
+        )
         if (state.isEmpty) {
             Box(modifier = Modifier.fillMaxSize()) {
                 EmptyState(
