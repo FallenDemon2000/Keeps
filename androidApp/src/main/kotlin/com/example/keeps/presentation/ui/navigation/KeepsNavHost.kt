@@ -115,6 +115,6 @@ private fun navigateToTopLevel(navController: NavHostController, route: Any) {
 private fun resultsBadgeCount(): Int {
     if (LocalInspectionMode.current) return 0
     val scanResultsRepository = koinInject<ScanResultsRepository>()
-    val groups by scanResultsRepository.groups.collectAsStateWithLifecycle()
-    return groups.size
+    val results by scanResultsRepository.results.collectAsStateWithLifecycle()
+    return results.groups.size
 }

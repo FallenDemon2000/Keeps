@@ -6,6 +6,7 @@ package com.example.keeps.presentation.results.model
 data class ResultsUiState(
     val groups: List<PhotoGroupUi> = emptyList(),
     val selectedPhotoIds: Map<String, Set<String>> = emptyMap(),
+    val similarityThreshold: Int = 80,
 ) {
     val totalPhotoCount: Int get() = groups.sumOf { it.photos.size }
     val selectedCount: Int get() = selectedPhotoIds.values.sumOf { it.size }

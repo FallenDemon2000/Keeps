@@ -70,7 +70,11 @@ private fun ResultsView(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        PageHeader(title = stringResource(id = R.string.results))
+        PageHeader(
+            title = stringResource(id = R.string.results),
+            modifier = Modifier.fillMaxWidth(),
+            showLogoBadge = false,
+        )
         if (state.isEmpty) {
             Box(modifier = Modifier.fillMaxSize()) {
                 EmptyState(
@@ -104,6 +108,7 @@ private fun ResultsContent(
         ResultsStats(
             groupCount = state.groups.size.toString(),
             totalPhotoCount = state.totalPhotoCount.toString(),
+            similarityThreshold = state.similarityThreshold,
             onStartNewScan = onStartNewScan,
             modifier = Modifier
                 .fillMaxWidth()
@@ -145,6 +150,7 @@ private fun ResultsContent(
 private fun ResultsStats(
     groupCount: String,
     totalPhotoCount: String,
+    similarityThreshold: Int,
     onStartNewScan: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -153,14 +159,21 @@ private fun ResultsStats(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row {
+                Text(
+                    text = "$groupCount groups",
+                    style = KeepsTheme.typography.titleSmall,
+                )
+                Text(
+                    text = " \u00B7 $totalPhotoCount photos",
+                    style = KeepsTheme.typography.bodyMedium,
+                    color = KeepsTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Text(
-                text = "$groupCount groups",
-                style = KeepsTheme.typography.titleSmall,
-            )
-            Text(
-                text = " \u00B7 $totalPhotoCount photos",
-                style = KeepsTheme.typography.bodyMedium,
+                text = stringResource(R.string.scan_similarity_threshold, similarityThreshold),
+                style = KeepsTheme.typography.labelSmallEmphasized,
                 color = KeepsTheme.colorScheme.onSurfaceVariant,
             )
         }

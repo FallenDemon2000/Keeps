@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,7 +37,7 @@ class ResultsViewModel(
     val events: Flow<ResultsEvent> = _events.receiveAsFlow()
 
     private val _resultsState = MutableStateFlow(ResultsUiState())
-    val resultsState: StateFlow<ResultsUiState> = _resultsState
+    val resultsState: StateFlow<ResultsUiState> = _resultsState.asStateFlow()
 
     init {
         collectScanResultsChanges()
@@ -57,9 +58,12 @@ class ResultsViewModel(
 
     private fun collectScanResultsChanges() {
         viewModelScope.launch {
-            scanResultsRepository.groups.collect { groups ->
+            scanResultsRepository.results.collect { results ->
                 _resultsState.update {
-                    it.copy(groups = groups.toUiGroups())
+                    it.copy(
+                        groups = results.groups.toUiGroups(),
+                        similarityThreshold = (results.similarityThreshold * 100).toInt(),
+                    )
                 }
             }
         }
@@ -84,7 +88,7 @@ class ResultsViewModel(
     }
 
     private fun selectAllInGroup(groupId: String) {
-        val group = resultsState.value.groups.firstOrNull { it.id == groupId } ?: return
+        val group = _resultsState.value.groups.firstOrNull { it.id == groupId } ?: return
         val groupPhotoIds = group.photos.map { it.id }.toSet()
         val updated = _resultsState.value.selectedPhotoIds.plus(groupId to groupPhotoIds)
 
@@ -102,7 +106,7 @@ class ResultsViewModel(
 
     private fun requestDelete() {
         val selectedIds = _resultsState.value.selectedPhotoIds.values.flatten().toSet()
-        val photos = scanResultsRepository.groups.value
+        val photos = scanResultsRepository.results.value.groups
             .flatMap { it.photos }
             .filter { it.id in selectedIds }
 
@@ -112,7 +116,7 @@ class ResultsViewModel(
 
     private fun requestKeep() {
         val selected = _resultsState.value.selectedPhotoIds
-        val photos = scanResultsRepository.groups.value
+        val photos = scanResultsRepository.results.value.groups
             .flatMap { group ->
                 val keepIds = selected[group.id] ?: return@flatMap emptyList()
                 group.photos.filter { it.id !in keepIds }
@@ -123,11 +127,12 @@ class ResultsViewModel(
     }
 
     private fun removeDeleted(photoIds: Set<String>) {
-        val updatedGroups = scanResultsRepository.groups.value
+        val results = scanResultsRepository.results.value
+        val updatedGroups = results.groups
             .map { group -> group.copy(photos = group.photos.filter { it.id !in photoIds }) }
             .filter { it.photos.isNotEmpty() }
 
-        scanResultsRepository.setResults(updatedGroups)
+        scanResultsRepository.setResults(updatedGroups, results.similarityThreshold)
         clearSelection()
     }
 
