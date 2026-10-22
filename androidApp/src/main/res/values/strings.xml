@@ -3,8 +3,11 @@
 
     <!--  SCREEN RESOURCE STRINGS  -->
     <string name="home">"Home"</string>
-    <string name="results">"Results"</string>
     <string name="settings">"Settings"</string>
+
+    <!--  RESULT SCREEN STRINGS  -->
+    <string name="results">"Results"</string>
+    <string name="scan_similarity_threshold">Similarity %1$d%%</string>
     <string name="photo_access_required">"Photo access is needed to delete photos"</string>
     <string name="delete_failed">"Couldn't delete photos"</string>
 </resources>
