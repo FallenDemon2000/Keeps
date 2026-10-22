@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keeps.data.scan.ScanResultsRepository
+import com.example.keeps.data.settings.SettingsRepository
 import com.example.keeps.domain.usecase.GroupPhotosUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -31,6 +32,7 @@ private const val SCAN_STEP_INCREMENT = 0.08f
 class HomeViewModel(
     private val groupPhotosUseCase: GroupPhotosUseCase,
     private val scanResultsRepository: ScanResultsRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Idle)
@@ -43,8 +45,9 @@ class HomeViewModel(
         if (uris.isEmpty() || _state.value is HomeUiState.Scanning) return
         viewModelScope.launch {
             _state.update { HomeUiState.Scanning(0f) }
+            val similarityThreshold = settingsRepository.getSimilarityThreshold()
             val groups = groupPhotosUseCase(uris)
-            scanResultsRepository.setResults(groups)
+            scanResultsRepository.setResults(groups, similarityThreshold)
 
             var progress = 0f
             while (progress < 1f) {
