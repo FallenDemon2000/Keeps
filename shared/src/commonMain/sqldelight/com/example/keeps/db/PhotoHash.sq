@@ -1,0 +1,11 @@
+CREATE TABLE photoHash (
+    photoId TEXT NOT NULL PRIMARY KEY,
+    sizeBytes INTEGER NOT NULL,
+    hash INTEGER NOT NULL
+);
+
+selectOne:
+SELECT sizeBytes, hash FROM photoHash WHERE photoId = ?;
+
+upsert:
+INSERT OR REPLACE INTO photoHash(photoId, sizeBytes, hash) VALUES (?, ?, ?);
