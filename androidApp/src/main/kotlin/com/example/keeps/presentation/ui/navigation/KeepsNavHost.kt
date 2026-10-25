@@ -82,7 +82,7 @@ fun KeepsNavHost(
         ) {
             composable<HomeScreen> {
                 HomeScreen(
-                    onScanCompleted = { navigateToTopLevel(navController, ResultsScreen) },
+                    onFirstResultsReady = { navigateToTopLevel(navController, ResultsScreen) },
                 )
             }
             composable<ResultsScreen> {

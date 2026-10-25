@@ -1,14 +1,21 @@
 package com.example.keeps.domain.model
 
-import com.example.keeps.data.media.Photo
+enum class GroupKind {
+    /** Photos whose perceptual hashes are close to each other. */
+    Similar,
+
+    /** The single bucket holding every photo that matched nothing else. */
+    Unique,
+}
 
 /**
- * A group of photos considered "duplicates" of one another. Today, grouping is
- * produced by a hardcoded/random placeholder (see `GroupPhotosUseCase`), so
- * [similarityPercent] is not yet a real perceptual-similarity score.
+ * A group of photos. For [GroupKind.Similar] groups, [similarityPercent] is the
+ * average perceptual similarity between the members; the [GroupKind.Unique]
+ * bucket has no meaningful similarity.
  */
 data class PhotoGroup(
     val id: String,
     val similarityPercent: Int,
     val photos: List<Photo>,
+    val kind: GroupKind = GroupKind.Similar,
 )

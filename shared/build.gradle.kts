@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -35,12 +36,30 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.androidx.datastore.preferences.core)
+            api(libs.sqldelight.runtime)
+            implementation(libs.kotlinx.coroutines.core)
         }
+
+        iosMain.dependencies {
+            implementation(libs.sqldelight.driver.native)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.testing.mockk)
             implementation(libs.testing.turbine)
+        }
+        getByName("androidHostTest").dependencies {
+            implementation(libs.sqldelight.driver.sqlite)
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("KeepsDatabase") {
+            packageName.set("com.example.keeps.db")
         }
     }
 }

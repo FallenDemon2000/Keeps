@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.keeps.data.scan.ScanResultsRepository
+import com.example.keeps.domain.model.GroupKind
+import com.example.keeps.domain.model.PhotoGroup
 import com.example.keeps.domain.usecase.CreateDeleteRequestUseCase
 import com.example.keeps.ktx.runOrNull
 import com.example.keeps.presentation.results.model.ResultsAction
@@ -21,8 +23,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Owns the Results screen's selection state over the latest scan's groups,
- * read from [ScanResultsRepository] (populated by `HomeViewModel`'s real photo
- * picker + placeholder grouping flow). Deleting is a two-step flow: the
+ * read from [ScanResultsRepository] (populated progressively by the background scan;
+ * Delete/Keep are ignored until the scan completes). Deleting is a two-step flow: the
  * selected photos' deletion is requested via [ResultsEvent.RequestDelete]
  * (system confirmation dialog); only once the UI reports
  * [ResultsAction.DeleteConfirmed] are they removed from the in-memory groups.
@@ -41,6 +43,7 @@ class ResultsViewModel(
 
     init {
         collectScanResultsChanges()
+        collectScanProgress()
     }
 
     fun onAction(action: ResultsAction) {
@@ -63,6 +66,20 @@ class ResultsViewModel(
                     it.copy(
                         groups = results.groups.toUiGroups(),
                         similarityThreshold = (results.similarityThreshold * 100).toInt(),
+                        selectedPhotoIds = it.selectedPhotoIds.remappedTo(results.groups),
+                    )
+                }
+            }
+        }
+    }
+
+    private fun collectScanProgress() {
+        viewModelScope.launch {
+            scanResultsRepository.progress.collect { progress ->
+                _resultsState.update {
+                    it.copy(
+                        isAnalyzing = !progress.isComplete,
+                        analyzedFraction = progress.fraction,
                     )
                 }
             }
@@ -105,6 +122,7 @@ class ResultsViewModel(
     }
 
     private fun requestDelete() {
+        if (_resultsState.value.isAnalyzing) return
         val selectedIds = _resultsState.value.selectedPhotoIds.values.flatten().toSet()
         val photos = scanResultsRepository.results.value.groups
             .flatMap { it.photos }
@@ -115,8 +133,10 @@ class ResultsViewModel(
     }
 
     private fun requestKeep() {
+        if (_resultsState.value.isAnalyzing) return
         val selected = _resultsState.value.selectedPhotoIds
         val photos = scanResultsRepository.results.value.groups
+            .filter { it.kind == GroupKind.Similar }
             .flatMap { group ->
                 val keepIds = selected[group.id] ?: return@flatMap emptyList()
                 group.photos.filter { it.id !in keepIds }
@@ -145,5 +165,21 @@ class ResultsViewModel(
         }
 
         _events.trySend(event ?: ResultsEvent.DeleteFailed)
+    }
+
+    /**
+     * Groups merge and change while a scan is running, so selected photos are
+     * re-attached to whichever group now contains them (dropping vanished ones).
+     */
+    private fun Map<String, Set<String>>.remappedTo(
+        groups: List<PhotoGroup>,
+    ): Map<String, Set<String>> {
+        val selected = values.flatten().toSet()
+        if (selected.isEmpty()) return emptyMap()
+
+        return groups.mapNotNull { group ->
+            val ids = group.photos.map { it.id }.filter { it in selected }.toSet()
+            if (ids.isEmpty()) null else group.id to ids
+        }.toMap()
     }
 }
