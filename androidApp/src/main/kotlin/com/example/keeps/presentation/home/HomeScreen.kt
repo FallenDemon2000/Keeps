@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.keeps.R
-import com.example.keeps.domain.usecase.MAX_SCAN_PHOTOS
 import com.example.keeps.presentation.ui.components.LoadingState
 import com.example.keeps.presentation.ui.components.PageHeader
 import com.example.keeps.presentation.ui.components.buttons.PrimaryButton
@@ -39,20 +38,19 @@ import org.koin.androidx.compose.koinViewModel
 
 /**
  * Entry point for the Home tab: collects [HomeViewModel] state, launches the
- * system photo picker (capped at [MAX_SCAN_PHOTOS] images, local-only — no
- * network upload), observes the one-time scan-completed event, and renders
- * [HomeView].
+ * system photo picker (local-only — no network upload), observes the one-time
+ * first-results-ready event, and renders [HomeView].
  */
 @Composable
 fun HomeScreen(
-    onScanCompleted: () -> Unit,
+    onFirstResultsReady: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val pickPhotos = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = MAX_SCAN_PHOTOS),
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
     ) { uris -> viewModel.onPhotosPicked(uris) }
 
     val onChoosePhotosClicked = {
@@ -65,7 +63,7 @@ fun HomeScreen(
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
-                HomeEvent.ScanCompleted -> onScanCompleted()
+                HomeEvent.FirstResultsReady -> onFirstResultsReady()
             }
         }
     }
@@ -93,7 +91,7 @@ private fun HomeView(
             is HomeUiState.Scanning -> {
                 LoadingState(
                     title = "Scanning\u2026",
-                    subtitle = "Computing perceptual hashes",
+                    subtitle = "Analyzing and grouping your photos",
                     progress = state.progress,
                     progressPercentText = "${(state.progress * 100).toInt()}%",
                 )

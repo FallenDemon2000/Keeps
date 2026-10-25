@@ -31,6 +31,7 @@ import com.example.keeps.presentation.results.model.ResultsAction
 import com.example.keeps.presentation.results.model.ResultsUiState
 import com.example.keeps.presentation.ui.components.EmptyState
 import com.example.keeps.presentation.ui.components.KeepsCard
+import com.example.keeps.presentation.ui.components.KeepsLinearProgress
 import com.example.keeps.presentation.ui.components.PageHeader
 import com.example.keeps.presentation.ui.components.SelectableMediaTile
 import com.example.keeps.presentation.ui.components.badges.SimilarityBadge
@@ -106,7 +107,7 @@ private fun ResultsContent(
 ) {
     Column(modifier = modifier) {
         ResultsStats(
-            groupCount = state.groups.size.toString(),
+            groupCount = state.similarGroupCount.toString(),
             totalPhotoCount = state.totalPhotoCount.toString(),
             similarityThreshold = state.similarityThreshold,
             onStartNewScan = onStartNewScan,
@@ -114,6 +115,14 @@ private fun ResultsContent(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp),
         )
+        if (state.isAnalyzing) {
+            AnalyzingBanner(
+                fraction = state.analyzedFraction,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+            )
+        }
         Box(modifier = Modifier.weight(1f)) {
             val bottomPadding = if (state.selectedCount > 0) 120.dp else 24.dp
             LazyColumn(
@@ -134,6 +143,7 @@ private fun ResultsContent(
                 ActionBar(
                     selectedCount = state.selectedCount,
                     selectedBytes = state.selectedBytes,
+                    actionsEnabled = !state.isAnalyzing,
                     onClear = { onAction(ResultsAction.ClearSelection) },
                     onDelete = { onAction(ResultsAction.DeleteSelected) },
                     onKeep = { onAction(ResultsAction.KeepSelected) },
@@ -187,6 +197,21 @@ private fun ResultsStats(
 }
 
 @Composable
+private fun AnalyzingBanner(
+    fraction: Float,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = "Analyzing\u2026 ${(fraction * 100).toInt()}% \u00B7 results may still change",
+            style = KeepsTheme.typography.bodySmall,
+            color = KeepsTheme.colorScheme.onSurfaceVariant,
+        )
+        KeepsLinearProgress(progress = fraction)
+    }
+}
+
+@Composable
 @Suppress("LongMethod")
 private fun GroupCard(
     group: PhotoGroupUi,
@@ -207,11 +232,15 @@ private fun GroupCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 SimilarityBadge(
-                    percentText = "${group.similarityPercent}%",
-                    isHighSimilarity = group.similarityPercent >= 90,
+                    percentText = if (group.isUnique) "Unique" else "${group.similarityPercent}%",
+                    isHighSimilarity = !group.isUnique && group.similarityPercent >= 90,
                 )
                 Text(
-                    text = "${group.photos.size} similar photos",
+                    text = if (group.isUnique) {
+                        "${group.photos.size} photos with no match"
+                    } else {
+                        "${group.photos.size} similar photos"
+                    },
                     style = KeepsTheme.typography.bodySmall,
                     color = KeepsTheme.colorScheme.onSurfaceVariant,
                 )
@@ -259,9 +288,11 @@ private fun GroupCard(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun ActionBar(
     selectedCount: Int,
     selectedBytes: Long,
+    actionsEnabled: Boolean,
     onClear: () -> Unit,
     onDelete: () -> Unit,
     onKeep: () -> Unit,
@@ -299,6 +330,7 @@ private fun ActionBar(
             ActionButton(
                 text = "Delete",
                 onClick = onDelete,
+                enabled = actionsEnabled,
                 textColor = KeepsTheme.colorScheme.onError,
                 backgroundColor = KeepsTheme.colorScheme.error,
             )
@@ -306,6 +338,7 @@ private fun ActionBar(
             ActionButton(
                 text = "Keep",
                 onClick = onKeep,
+                enabled = actionsEnabled,
                 textColor = KeepsTheme.colorScheme.onPrimary,
                 backgroundColor = KeepsTheme.colorScheme.primary,
             )

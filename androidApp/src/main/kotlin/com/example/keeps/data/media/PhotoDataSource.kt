@@ -6,6 +6,7 @@ import android.content.IntentSender
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import com.example.keeps.domain.model.Photo
 import com.example.keeps.ktx.runOrNull
 
 /**

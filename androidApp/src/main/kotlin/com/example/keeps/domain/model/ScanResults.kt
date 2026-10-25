@@ -1,6 +1,4 @@
-package com.example.keeps.data.scan
-
-import com.example.keeps.domain.model.PhotoGroup
+package com.example.keeps.domain.model
 
 /** Groups and the configured threshold captured when their scan started. */
 data class ScanResults(

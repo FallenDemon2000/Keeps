@@ -2,7 +2,7 @@ package com.example.keeps.domain.usecase
 
 import android.content.IntentSender
 import android.net.Uri
-import com.example.keeps.data.media.PhotoRepository
+import com.example.keeps.domain.repository.PhotoRepository
 
 /**
  * Builds the system confirmation request that permanently deletes the given

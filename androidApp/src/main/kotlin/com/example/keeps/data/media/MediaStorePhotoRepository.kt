@@ -2,20 +2,12 @@ package com.example.keeps.data.media
 
 import android.content.IntentSender
 import android.net.Uri
+import com.example.keeps.domain.model.Photo
+import com.example.keeps.domain.repository.PhotoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * Turns photo URIs returned by the system photo picker into domain [Photo]
- * objects, reading their metadata via [PhotoDataSource].
- */
-interface PhotoRepository {
-    suspend fun loadPhotos(uris: List<Uri>): List<Photo>
-
-    /** Builds the system confirmation dialog that deletes [uris] from device storage. */
-    fun createDeleteRequest(uris: List<Uri>): IntentSender
-}
-
+/** Loads photo metadata and builds delete requests through device media access. */
 class MediaStorePhotoRepository(
     private val photoDataSource: PhotoDataSource,
 ) : PhotoRepository {

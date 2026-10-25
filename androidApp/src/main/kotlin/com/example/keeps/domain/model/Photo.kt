@@ -1,4 +1,4 @@
-package com.example.keeps.data.media
+package com.example.keeps.domain.model
 
 import android.net.Uri
 
