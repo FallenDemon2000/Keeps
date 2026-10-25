@@ -251,6 +251,20 @@ private fun HomeViewPreview() {
 @Preview
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+private fun HomeScanningDarkPreview() {
+    KeepsTheme(darkTheme = true) {
+        Scaffold {
+            HomeView(
+                state = HomeUiState.Scanning(progress = 0.68f),
+                onChoosePhotosClicked = {},
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 private fun HomeScanningPreview() {
     KeepsTheme {
         Scaffold {
